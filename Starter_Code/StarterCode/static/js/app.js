@@ -107,6 +107,7 @@ function selector(){
   });
 }
 
+// Create function to aid in the creating of labels for the yaxis
 function addLabel(num){
   return 'OTU '+ num;
 }
@@ -116,9 +117,8 @@ selector();
 
 // Fetch the JSON data and console log it
 d3.json(url).then(function(data) {
-    console.log(data.names);
-    console.log(data.metadata[0])
 
+    // Create variables for all the metadata
     var meta_id = data.metadata[0].id;
     var meta_ethnicity = data.metadata[0].ethnicity;
     var meta_gender = data.metadata[0].gender;
@@ -137,7 +137,7 @@ d3.json(url).then(function(data) {
       'wfreq': meta_wfreq
     };
 
-
+    // Create the list "li" to appear in the Demographic Info
     d3.select('#sample-metadata').append("li").text(`id: ${meta_id}`);
     d3.select('#sample-metadata').append("li").text(`ethnicity: ${meta_ethnicity}`);
     d3.select('#sample-metadata').append("li").text(`gender: ${meta_gender}`);
@@ -149,9 +149,11 @@ d3.json(url).then(function(data) {
     d3.selectAll("li").style("font", "20px");
     d3.selectAll("li").style("list-style-type", "none");
 
+
+    // Fetch and create values for samplevalues otuid and labels
     var sample_value = data.samples[0].sample_values;
     var otu_id = data.samples[0].otu_ids;
-    var otu_label = data.samples[0].otu_labels
+    var otu_label = data.samples[0].otu_labels;
 
 
     function init(){
@@ -162,6 +164,7 @@ d3.json(url).then(function(data) {
         type:"bar",
         text:otu_label
       }];
+      // Create the layout for the barplot
       bar_layout = {
         title:"Top 10 OTUs",
         showlegend:false,
@@ -191,7 +194,7 @@ d3.json(url).then(function(data) {
         xaxis:{title:"OTU ID"},
         yaxis:{title:"Sample Value"}
       };
-
+      // Create the Plot
       Plotly.newPlot("bubble", plotData2, bubble_layout);
     }
     
