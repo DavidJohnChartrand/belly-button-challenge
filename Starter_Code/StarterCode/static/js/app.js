@@ -1,6 +1,78 @@
 // Get the samples from biodiversity endpoint
 const url= "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json"
 
+function optionChanged(newSample) {
+  d3.json(url).then((data)=> {
+      let samples = data.samples;
+      //filter() is a method that filters the samples array for the object with the id that matches the newSample
+      let resultArray = samples.filter(sampleObj => sampleObj.id == newSample);
+      let result = resultArray[0];
+
+      var sample_value_ = result.sample_values;
+      var otu_id_ = result.otu_ids;
+      var otu_label_ = result.otu_labels
+
+      newBar = [{
+        x: sample_value_.slice(0,10).reverse(),
+        y: otu_id_.slice(0,10).reverse().map(addLabel),
+        orientation:"h",
+        type:"bar",
+        text:otu_label_
+      }];
+
+      bar_layout = {
+        title:"Top 10 OTUs",
+        showlegend:false,
+        xaxis:{title:"Sample Values"},
+        yaxis:{title:"OTU ID"}
+      };
+
+      // Create the bar plot
+      Plotly.newPlot("bar", newBar, bar_layout);
+
+      newBubble=[{
+        x: otu_id_,
+        y: sample_value_,
+        mode: 'markers',
+        marker: {
+          size: sample_value_,
+          color: otu_id_
+        },
+        text:otu_label_
+      }];
+
+      // Create the layout for the Bubble plot
+      bubble_layout ={
+        title:"Individual Samples",
+        showlegend:false,
+        xaxis:{title:"OTU ID"},
+        yaxis:{title:"Sample Value"}
+      };
+
+      Plotly.newPlot("bubble", newBubble, bubble_layout);
+
+      // create the updating metadate for demographic info
+      let metadataArray = data.metadata.filter(sampleObj => sampleObj.id == newSample);
+      let metaResults = metadataArray[0];
+
+      d3.selectAll("li").remove()
+      d3.select('#sample-metadata').append("li").text(`id: ${metaResults.id}`);
+      d3.select('#sample-metadata').append("li").text(`ethnicity: ${metaResults.ethnicity}`);
+      d3.select('#sample-metadata').append("li").text(`gender: ${metaResults.gender}`);
+      d3.select('#sample-metadata').append("li").text(`age: ${metaResults.age}`);
+      d3.select('#sample-metadata').append("li").text(`location: ${metaResults.location}`);
+      d3.select('#sample-metadata').append("li").text(`bbtype: ${metaResults.bbtype}`);
+      d3.select('#sample-metadata').append("li").text(`wfreq: ${metaResults.wfreq}`);
+
+      d3.selectAll("li").style("font", "20px");
+      d3.selectAll("li").style("list-style-type", "none");
+
+    
+
+
+  });
+}
+
 let BinarySearch = (list,val)=>{
   let left = 0;
   let right = list.length - 1;
@@ -97,8 +169,10 @@ d3.json(url).then(function(data) {
         yaxis:{title:"OTU ID"}
       };
 
+      // Create the bar plot
       Plotly.newPlot("bar", plotData1, bar_layout);
 
+      // Create the trace for the Bubble plot
       plotData2=[{
         x: otu_id,
         y: sample_value,
@@ -110,6 +184,7 @@ d3.json(url).then(function(data) {
         text:otu_label
       }];
       
+      // Create the layout for the Bubble plot
       bubble_layout ={
         title:"Individual Samples",
         showlegend:false,
@@ -119,8 +194,40 @@ d3.json(url).then(function(data) {
 
       Plotly.newPlot("bubble", plotData2, bubble_layout);
     }
+    
+    
+
+
+
+    // Fuction called by DOM changes
+    function getData() {
+      let dropdownMenu = d3.select("#selDataset");
+      // Assign the value of the dropdown menu option to a let
+      let dataset = dropdownMenu.property("value");
+      console.log(dataset)
+      // Initailize an empty array for the country's data
+      
+      let names = data.names;
+      console.log(names)
+      numb = BinarySearch(names,'1601')
+      console.log(numb)
+
+      let data = [];
+
+      var meta_id = data.metadata[numb].id;
+      var meta_ethnicity = data.metadata[numb].ethnicity;
+      var meta_gender = data.metadata[numb].gender;
+      var meta_age = data.metadata[numb].age;
+      var meta_location = data.metadata[numb].location;
+      var meta_bbtype = data.metadata[numb].bbtype;
+      var meta_wfreq = data.metadata[numb].wfreq;
+      
+
+
+    }
 
   init();
 
   });
 
+// init();
