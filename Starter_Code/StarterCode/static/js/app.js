@@ -12,6 +12,7 @@ function optionChanged(newSample) {
       var otu_id_ = result.otu_ids;
       var otu_label_ = result.otu_labels
 
+      // Trace for the updated barplot
       newBar = [{
         x: sample_value_.slice(0,10).reverse(),
         y: otu_id_.slice(0,10).reverse().map(addLabel),
@@ -20,6 +21,7 @@ function optionChanged(newSample) {
         text:otu_label_
       }];
 
+      // bar plot layout
       bar_layout = {
         title:"Top 10 OTUs",
         showlegend:false,
@@ -30,6 +32,7 @@ function optionChanged(newSample) {
       // Create the bar plot
       Plotly.newPlot("bar", newBar, bar_layout);
 
+      // Bubble plots trace updated
       newBubble=[{
         x: otu_id_,
         y: sample_value_,
@@ -55,6 +58,7 @@ function optionChanged(newSample) {
       let metadataArray = data.metadata.filter(sampleObj => sampleObj.id == newSample);
       let metaResults = metadataArray[0];
 
+      //remove the old li and replace it with the updated values
       d3.selectAll("li").remove()
       d3.select('#sample-metadata').append("li").text(`id: ${metaResults.id}`);
       d3.select('#sample-metadata').append("li").text(`ethnicity: ${metaResults.ethnicity}`);
@@ -157,6 +161,7 @@ d3.json(url).then(function(data) {
 
 
     function init(){
+      //trace for the barplot
       plotData1 = [{
         x: sample_value.slice(0,10).reverse(),
         y: otu_id.slice(0,10).reverse().map(addLabel),
@@ -232,5 +237,3 @@ d3.json(url).then(function(data) {
   init();
 
   });
-
-// init();
